@@ -36,10 +36,10 @@ shopt -s nullglob globstar
 #                         Various node components manage containers on the machine and communicate with the the control plane.
 #     (a) Kubelet: k8s agent on each node. Comms with control-plane & ensures that containers are run as instructed by control-plane.
 #                                          It also reports container status and other data.
-#     (b) container-runtime: It is not built into k8s, instead it is a separate piece of software for actually running containers.
+#     (b) kube-proxy: It's a network proxy. Handles tasks related to providing networking btwn containers & services running in the cluster.
+#     (c) container-runtime: It is not built into k8s, instead it is a separate piece of software for actually running containers.
 #                            examples are; docker, containerd etc
-#     (c) kube-procy: It's a network proxy. Handles tasks related to providing networking btwn containers & services running in the cluster.
-#     (c) containers: The containers themselves.
+#     (d) containers: The containers themselves.
 
 
 
