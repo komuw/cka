@@ -151,7 +151,7 @@ setup_kube_config(){
 }
 setup_kube_config
 kubectl get nodes # this should now work.
-
+kubectl get pods --all-namespaces
 
 # 9. setup k8s networking. We will use calico, but there are a bunch of other that you can use.
 kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
@@ -163,6 +163,7 @@ kubeadm token create --print-join-command # it will emit to stdout, a command th
 # 11. join workers to cluster(should be done in worker nodes.)
 sudo kubeadm join <ip>:<port> --token <some-token> --discovery-token-ca-cer-hash <some-hash> # command emitted by `kubeadm token create`
 
-
-
+# 12. verify(on the control-plane node/s)
+kubectl get nodes
+kubectl get pods --all-namespaces
 
