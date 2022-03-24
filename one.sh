@@ -166,4 +166,3 @@ sudo kubeadm join <ip>:<port> --token <some-token> --discovery-token-ca-cer-hash
 # 12. verify(on the control-plane node/s)
 kubectl get nodes
 kubectl get pods --all-namespaces
-
