@@ -55,7 +55,11 @@ insert_if_not_exists() {
         echo -n ""
     else
         # append
-        printf "${to_add}" >> "${file}"
+        { # try
+          printf "${to_add}" >> "${file}"
+        } || { # catch
+          printf "${to_add}" | sudo tee -a "${file}"
+        }
     fi
 }
 
@@ -63,10 +67,14 @@ insert_if_not_exists() {
 # Building a cluster.
 # You need 3 servers(1 control-plane, 2-worker nodes.)
 
+# 0. install some pre-requiste software
+sudo apt -y update && \
+sudo apt -y install grep curl wget
+
 # 1. setup some network stufff in all the nodes.
-CONTROL_PLANE_PRIVATE_IP="78.889.999" # TODO: replace this IPs with your actual ones.
-WORKER_ONE_PRIVATE_IP="66.889.999"
-WORKER_TWO_PRIVATE_IP="44.889.999"
+CONTROL_PLANE_PRIVATE_IP="10.0.1.101" # TODO: replace this IPs with your actual ones.
+WORKER_ONE_PRIVATE_IP="10.0.1.102"
+WORKER_TWO_PRIVATE_IP="10.0.1.103"
 etc_host_contents="
 ${CONTROL_PLANE_PRIVATE_IP} k8s-control-plane
 ${WORKER_ONE_PRIVATE_IP} k8s-worker-1
