@@ -94,7 +94,7 @@ sudo modprobe br_netfilter
 # 2. enable some k8s networking settings modules.
 kubernetes_cri_contents="
 net.bridge.bridge-nf-call-iptables  = 1
-net.ipv4.ipforward                  = 1
+net.ipv4.ip_forward                 = 1
 net.bridge.bridge-nf-call-ip6tables = 1
 "
 insert_if_not_exists "bridge-nf-call-ip6tables" "${kubernetes_cri_contents}" /etc/sysctl.d/99-kubernetes-cri.conf
