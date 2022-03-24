@@ -41,9 +41,97 @@ shopt -s nullglob globstar
 #                            examples are; docker, containerd etc
 #     (d) containers: The containers themselves.
 
+# This will write something to a text file if it doesnt already exist.
+insert_if_not_exists() {
+    # usage:
+    #   insert_if_not_exists "k8s-control-plane" "78.3.21 k8s-control-plane" /etc/hosts
+
+    to_check=$1
+    to_add=$2
+    file=$3
+
+    if grep -q "${to_check}" "${file}"; then
+        # already exists
+        echo -n ""
+    else
+        # append
+        printf "${to_add}" >> "${file}"
+    fi
+}
 
 
+# Building a cluster.
+# You need 3 servers(1 control-plane, 2-worker nodes.)
 
+# 1. setup some network stufff in all the nodes.
+CONTROL_PLANE_PRIVATE_IP="78.889.999" # TODO: replace this IPs with your actual ones.
+WORKER_ONE_PRIVATE_IP="66.889.999"
+WORKER_TWO_PRIVATE_IP="44.889.999"
+etc_host_contents="
+${CONTROL_PLANE_PRIVATE_IP} k8s-control-plane
+${WORKER_ONE_PRIVATE_IP} k8s-worker-1
+${WORKER_TWO_PRIVATE_IP} k8s-worker-2
+"
+insert_if_not_exists "${CONTROL_PLANE_PRIVATE_IP}" "${etc_host_contents}" /etc/hosts
+
+# 2. enable some kernel modules.
+kernel_module_contents="
+overlay
+br_netfilter
+"
+insert_if_not_exists "br_netfilter" "${kernel_module_contents}" /etc/modules-load.d/containerd.conf
+sudo modprobe overlay
+sudo modprobe br_netfilter
+
+# 2. enable some k8s networking settings modules.
+kubernetes_cri_contents="
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ipforward                  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+"
+insert_if_not_exists "bridge-nf-call-ip6tables" "${kubernetes_cri_contents}" /etc/sysctl.d/99-kubernetes-cri.conf
+sudo sysctl --system
+
+
+# 3. install containerd
+sudo apt -y update && \
+sudo apt -y install containerd
+
+
+# 4. containerd config file.
+mkdir -p /etc/containerd
+sudo containerd config default | sudo tee /etc/containerd/config.toml
+sudo systemctl restart containerd
+
+# 5. disable swap(needed so that k8s can work)
+sudo swapoff -a 
+cat /etc/fstab # need to check there's nothing in there that can enale swap.
+
+# 6. install pre-required packages.
+sudo apt -y update && \
+sudo apt -y install \
+                  apt-transport-https \
+                  curl \
+                  # curl & apt-transport-https are required, the others are just here for debugging purposes.
+                  procps \
+                  psmisc \
+                  telnet \
+                  iputils-ping \
+                  nano \
+                  wget
+
+
+# 7. install k8s packages.
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+kubernetes_sources_contents="
+deb https://apt.kubernetes.io/ kubernetes-xenial main
+"
+insert_if_not_exists "kubernetes-xenial" "${kubernetes_sources_contents}" /etc/apt/sources.list.d/kubernetes.list
+sudo apt -y update && \
+sudo apt -y install kubelet=1.23.0-00 \
+                    kubeadm=1.23.0-00 \
+                    kubectl=1.23.0-00
+sudo apt mark hold kubelet kubeadm kubectl # prevent automatic upgrades.
 
 
 
