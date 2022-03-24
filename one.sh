@@ -139,7 +139,7 @@ sudo apt -y update && \
 sudo apt -y install kubelet=1.23.0-00 \
                     kubeadm=1.23.0-00 \
                     kubectl=1.23.0-00
-sudo apt mark hold kubelet kubeadm kubectl # prevent automatic upgrades.
+sudo apt-mark hold kubelet kubeadm kubectl # prevent automatic upgrades.
 
 # 8. intialize cluster(This only needs to be done in the control-plane node/s)
 sudo kubeadm init --pod-network-cidr 192.168.0.0/16 --kubernetes-version 1.23.0 # this command will output some further directions on what to do next.
