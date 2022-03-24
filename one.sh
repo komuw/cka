@@ -133,6 +133,28 @@ sudo apt -y install kubelet=1.23.0-00 \
                     kubectl=1.23.0-00
 sudo apt mark hold kubelet kubeadm kubectl # prevent automatic upgrades.
 
+# 8. intialize cluster(This only needs to be done in the control-plane node/s)
+sudo kubeadm init --pod-network-cidr 192.168.0.0/16 --kubernetes-version 1.23.0 # this command will output some further directions on what to do next.
+setup_kube_config(){
+    # This is an example of the instructions emitted by the `kubeadm init` command
+    mkdir -p $HOME/.kube
+    sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    sudo chown $(id -u):$(id -g) $HOME/.kube/config
+}
+setup_kube_config
+kubectl get nodes # this should now work.
+
+
+# 9. setup k8s networking. We will use calico, but there are a bunch of other that you can use.
+kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+
+# 10. fetch token to use to join workers to the cluster.
+kubeadm token create --print-join-command # it will emit to stdout, a command that you need to run in worker nodes.
+
+
+# 11. join workers to cluster(should be done in worker nodes.)
+sudo kubeadm join <ip>:<port> --token <some-token> --discovery-token-ca-cer-hash <some-hash> # command emitted by `kubeadm token create`
+
 
 
 
