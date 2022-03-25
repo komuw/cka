@@ -225,5 +225,3 @@ kubectl get namespaces; # to list namespaces
 kubectl create namespace my-namespace; # to create namespace.
 kubectl get pods --namespace=kube-system; # specify a namespace
 kubectl get pods --all-namespaces; # from all namespaces.
- 
-
