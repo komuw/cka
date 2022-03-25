@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
-shopt -s nullglob globstar
 
 
 ## chapter 1.
@@ -69,7 +68,7 @@ insert_if_not_exists() {
 }
 
 1_install_pre_requistes(){
-  set -e
+  set -ex
   # install some pre-requiste software
   sudo apt -y update
   sudo apt -y install \
@@ -86,7 +85,7 @@ insert_if_not_exists() {
 }
 
 2_etc_hosts_networking(){
-  set -e
+  set -ex
   # setup some network stufff in all the nodes.
   CONTROL_PLANE_PRIVATE_IP="10.0.1.101" # TODO: replace this IPs with your actual ones.
   WORKER_ONE_PRIVATE_IP="10.0.1.102"
@@ -101,7 +100,7 @@ ${WORKER_TWO_PRIVATE_IP} k8s-worker-2
 
 
 3_kernel_modules(){
-  set -e
+  set -ex
   # enable some kernel modules.
   kernel_module_contents="
 overlay
@@ -113,7 +112,7 @@ br_netfilter
   }
 
 4_kubernetes_networking_settings(){
-  set -e
+  set -ex
   # enable some k8s networking settings modules.
   kubernetes_cri_contents="
 net.bridge.bridge-nf-call-iptables  = 1
@@ -125,14 +124,14 @@ net.bridge.bridge-nf-call-ip6tables = 1
 }
 
 5_install_containerd(){
-  set -e
+  set -ex
   # install containerd
   sudo apt -y update && \
   sudo apt -y install containerd
 }
 
 6_setup_containerd_config(){
-  set -e
+  set -ex
   #  containerd config file.
   mkdir -p /etc/containerd
   sudo containerd config default | sudo tee /etc/containerd/config.toml
@@ -140,7 +139,7 @@ net.bridge.bridge-nf-call-ip6tables = 1
 }
 
 7_disable_swap(){
-  set -e
+  set -ex
   # disable swap(needed so that k8s can work)
   sudo swapoff -a 
   cat /etc/fstab # need to check there's nothing in there that can enale swap.
@@ -148,7 +147,7 @@ net.bridge.bridge-nf-call-ip6tables = 1
 
 
 8_install_k8s_packages(){
-  set -e
+  set -ex
   # install k8s packages.
   curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
   kubernetes_sources_contents="
@@ -163,7 +162,7 @@ deb https://apt.kubernetes.io/ kubernetes-xenial main
 }
 
 9_intialize_cluster(){
-  set -e
+  set -ex
   # intialize cluster(This only needs to be done in the control-plane node/s)
   sudo kubeadm init --pod-network-cidr 192.168.0.0/16 --kubernetes-version 1.23.0 # this command will output some further directions on what to do next.
   setup_kube_config(){
@@ -178,13 +177,13 @@ deb https://apt.kubernetes.io/ kubernetes-xenial main
 }
 
 10_setup_calico(){
-  set -e
+  set -ex
   # setup k8s networking(on control-plane nodes). We will use calico, but there are a bunch of other that you can use.
   kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 }
 
 11_fetch_join_token(){
-  set -e
+  set -ex
   # fetch token to use to join workers to the cluster.
   kubeadm token create --print-join-command # it will emit to stdout, a command that you need to run in worker nodes.
   comd=$(kubeadm token create --print-join-command)
@@ -192,13 +191,13 @@ deb https://apt.kubernetes.io/ kubernetes-xenial main
 }
 
 12_join_workers_to_cluster(){
-  set -e
+  set -ex
   # join workers to cluster(should be done in worker nodes.)
   sudo kubeadm join <ip>:<port> --token <some-token> --discovery-token-ca-cer-hash <some-hash> # command emitted by `kubeadm token create`
 }
 
 13_verify(){
-  set -e
+  set -ex
   # verify(on the control-plane node/s)
   kubectl get nodes
   kubectl get pods --all-namespaces

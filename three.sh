@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
-shopt -s nullglob globstar
+
 
 ## chapter 3.
 # K8s management:
@@ -67,7 +67,7 @@ kubectl uncordon <node-name>
 #     - uncordon node.
 
 upgrade_control_plane(){
-    set -e
+    set -ex
     control_plane_name=$1
 
     kubectl get nodes
@@ -92,26 +92,21 @@ upgrade_control_plane(){
 upgrade_control_plane k8s-control
 
 upgrade_worker(){
-    set -e
+    set -ex
     worker_name=$1
 
-    kubectl get nodes
-    kubectl drain "${worker_name}" --ignore-daemonsets # this specific command should be ran in control-plane.
+    kubectl drain "${worker_name}" --ignore-daemonsets --force # this specific command should be ran in control-plane.
     sudo apt -y update
     kubeadm version
     sudo apt -y install --allow-change-held-packages kubeadm=1.22.2-00
     kubeadm version
     sudo kubeadm upgrade node
-    kubelet --version
-    kubectl version
+    kubelet --version # you cant run `kubectl version` in workers, fails with error about port.
     sudo apt -y install --allow-change-held-packages kubelet=1.22.2-00 kubectl=1.22.2-00
     kubelet --version
-    kubectl version
     sudo systemctl daemon-reload
     sudo systemctl restart kubelet
     kubectl uncordon "${worker_name}" # this specific command should be ran in control-plane.
 }
 upgrade_worker k8s-worker1
-
-
-
+upgrade_worker k8s-worker2
