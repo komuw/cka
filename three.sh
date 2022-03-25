@@ -67,6 +67,7 @@ kubectl uncordon <node-name>
 #     - uncordon node.
 
 upgrade_control_plane(){
+    set -e
     control_plane_name=$1
 
     kubectl get nodes
@@ -77,10 +78,10 @@ upgrade_control_plane(){
     kubeadm version
     sudo kubeadm upgrade plan v1.22.2
     sudo kubeadm upgrade apply v1.22.2
-    kubelet version
+    kubelet --version
     kubectl version
     sudo apt -y install --allow-change-held-packages kubelet=1.22.2-00 kubectl=1.22.2-00
-    kubelet version
+    kubelet --version
     kubectl version
     sudo systemctl daemon-reload
     sudo systemctl restart kubelet
@@ -91,6 +92,7 @@ upgrade_control_plane(){
 upgrade_control_plane k8s-control
 
 upgrade_worker(){
+    set -e
     worker_name=$1
 
     kubectl get nodes
@@ -100,20 +102,16 @@ upgrade_worker(){
     sudo apt -y install --allow-change-held-packages kubeadm=1.22.2-00
     kubeadm version
     sudo kubeadm upgrade node
-    kubelet version
+    kubelet --version
     kubectl version
     sudo apt -y install --allow-change-held-packages kubelet=1.22.2-00 kubectl=1.22.2-00
-    kubelet version
+    kubelet --version
     kubectl version
     sudo systemctl daemon-reload
     sudo systemctl restart kubelet
     kubectl uncordon "${worker_name}" # this specific command should be ran in control-plane.
 }
 upgrade_worker k8s-worker1
-
-
-
-
 
 
 
