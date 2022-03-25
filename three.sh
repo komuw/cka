@@ -73,7 +73,7 @@ upgrade_control_plane(){
     kubectl drain "${control_plane_name}" --ignore-daemonsets
     sudo apt -y update
     kubeadm version
-    sudo apt -y install --allow-change-held-packages kubeadm==1.22.2-00
+    sudo apt -y install --allow-change-held-packages kubeadm=1.22.2-00
     kubeadm version
     sudo kubeadm upgrade plan v1.22.2
     sudo kubeadm upgrade apply v1.22.2
@@ -97,7 +97,7 @@ upgrade_worker(){
     kubectl drain "${worker_name}" --ignore-daemonsets # this specific command should be ran in control-plane.
     sudo apt -y update
     kubeadm version
-    sudo apt -y install --allow-change-held-packages kubeadm==1.22.2-00
+    sudo apt -y install --allow-change-held-packages kubeadm=1.22.2-00
     kubeadm version
     sudo kubeadm upgrade node
     kubelet version
@@ -110,10 +110,6 @@ upgrade_worker(){
     kubectl uncordon "${worker_name}" # this specific command should be ran in control-plane.
 }
 upgrade_worker k8s-worker1
-
-
-
-
 
 
 
