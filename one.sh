@@ -219,3 +219,11 @@ worker_nodes(){
   12_join_workers_to_cluster
 }
 
+# Namespaces:
+# They are virtual clusters backed by the same physical cluster. k8s objects(pods/containers etc) libve in namespaces.
+kubectl get namespaces; # to list namespaces
+kubectl create namespace my-namespace; # to create namespace.
+kubectl get pods --namespace=kube-system; # specify a namespace
+kubectl get pods --all-namespaces; # from all namespaces.
+ 
+
