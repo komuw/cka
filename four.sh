@@ -69,6 +69,15 @@ kubectl_cheatsheet(){
     --rm -ti \
     --image busybox \
     /bin/sh
+
+
+    # get a sample yaml file quickly. This yaml file can then be used in later commands.
+    kubectl create deployment my-deployment --image=nginx --dry-run -o yaml
+
+    # record the command that was used to make a change.
+    kubectl scale deployment my-deployment replicas=5 --record 
+    kubectl describe deployment my-deployment # The annotations will have the command that was recorded.
 }
+
 
 
