@@ -95,7 +95,11 @@ upgrade_worker(){
     set -ex
     worker_name=$1
 
-    kubectl drain "${worker_name}" --ignore-daemonsets --force # this specific command should be ran in control-plane.
+    { # try
+      kubectl drain "${worker_name}" --ignore-daemonsets --force # this specific command should be ran in control-plane.
+    } || { # catch
+      echo -n ""
+    }
     sudo apt -y update
     kubeadm version
     sudo apt -y install --allow-change-held-packages kubeadm=1.22.2-00
@@ -106,7 +110,12 @@ upgrade_worker(){
     kubelet --version
     sudo systemctl daemon-reload
     sudo systemctl restart kubelet
-    kubectl uncordon "${worker_name}" # this specific command should be ran in control-plane.
+    { # try
+      kubectl uncordon "${worker_name}" # this specific command should be ran in control-plane.
+    } || { # catch
+      echo -n ""
+    }
 }
 upgrade_worker k8s-worker1
 upgrade_worker k8s-worker2
+
