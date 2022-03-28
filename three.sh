@@ -119,3 +119,77 @@ upgrade_worker(){
 upgrade_worker k8s-worker1
 upgrade_worker k8s-worker2
 
+
+# Backing up & restoring etcd cluster data.
+# - Why backup : All k8s objects, apps and configs are stored in etcd.
+# - Backing up etcd
+# - Restoring etcd
+
+backup_etcd(){
+    # usage:
+    #    backup_etcd "10.0.1.101" "2379" "2380" "/tmp/ca.pem" "/tmp/cert.crt" "/tmp/key.key" "/tmp/etcd_backup.db"
+    set -ex
+
+    NODE_PRIVATE_IP=$1
+    BACKUP_PORT=$2
+    RESTORE_PORT=$3
+    CA_CERT_LOCATION=$4
+    CERT_LOCATION=$5
+    CERT_KEY_LOCATION=$6
+    BACKUP_FILE=$7
+
+    CLUSTER_NAME=$(ETCDCTL_API=3 etcdctl get cluster.name \
+                --endpoints=https://${NODE_PRIVATE_IP}:${BACKUP_PORT} \
+                --cacert=${CA_CERT_LOCATION} \
+                --cert=${CERT_LOCATION} \
+                --key=${CERT_KEY_LOCATION})
+    printf "\n\t CLUSTER_NAME is: ${CLUSTER_NAME} \n"
+
+    ETCDCTL_API=3 etcdctl \
+        snapshot \
+        save \
+        ${BACKUP_FILE} \
+        --endpoints=https://${NODE_PRIVATE_IP}:${BACKUP_PORT} \
+        --cacert=${CA_CERT_LOCATION} \
+        --cert=${CERT_LOCATION} \
+        --key=${CERT_KEY_LOCATION}
+}
+
+restore_etcd(){
+    # usage:
+    #    restore_etcd "10.0.1.101" "2379" "2380" "/tmp/ca.pem" "/tmp/cert.crt" "/tmp/key.key" "/tmp/etcd_backup.db"
+    set -ex
+
+    NODE_PRIVATE_IP=$1
+    BACKUP_PORT=$2
+    RESTORE_PORT=$3
+    CA_CERT_LOCATION=$4
+    CERT_LOCATION=$5
+    CERT_KEY_LOCATION=$6
+    BACKUP_FILE=$7
+
+    ETCDCTL_API=3 sudo etcdctl \
+    snapshot \
+    restore \
+    ${BACKUP_FILE} \
+    --initial-cluster etcd-restore=https://${NODE_PRIVATE_IP}:${RESTORE_PORT} \
+    --initial-advertise-peer-urls https://${NODE_PRIVATE_IP}:${RESTORE_PORT} \
+    --name etcd-restore \
+    --data-dir /var/lib/etcd
+
+    sudo chown -R etcd:etcd /var/lib/etcd
+
+    { # try
+      sudo systemctl restart etcd
+    } || { # catch
+      sudo systemctl start etcd
+    }
+
+    CLUSTER_NAME=$(ETCDCTL_API=3 etcdctl get cluster.name \
+                --endpoints=https://${NODE_PRIVATE_IP}:${BACKUP_PORT} \
+                --cacert=${CA_CERT_LOCATION} \
+                --cert=${CERT_LOCATION} \
+                --key=${CERT_KEY_LOCATION})
+    # The $CLUSTER_NAME here should match the one in `backup_etcd` assuming the restore happened succesfully.
+    printf "\n\t CLUSTER_NAME is: ${CLUSTER_NAME} \n"
+}
