@@ -117,6 +117,10 @@ create_rbac(){
     } || { # catch
       printf "\n\t dev user does not have permission to list pods. \n"
     }
+
+    rm -rf /tmp/role.yml /tmp/role-binding.yml
+    kubectl get role --all-namespaces
+    kubectl get rolebinding --all-namespaces
     
 
     role_contents='
@@ -156,6 +160,7 @@ roleRef:
     kubectl apply -f /tmp/role-binding.yml
 
     # dev user should now be able to list pods.
+    sleep 3
     kubectl get pods -n beebox-mobile --kubeconfig dev-k8s-config
 }
 
