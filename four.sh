@@ -109,29 +109,38 @@ kubectl_cheatsheet(){
 #                            Role define perms in a namespace, ClusterRole define perms cluster-wide.
 #  (b) RoleBinding & ClusterRoleBinding: objects that connect roles and clusterRoles to users.
 #  
+kubectl_cheatsheet(){
+    set -ex
 
-role_contents='
+    { # try
+      kubectl get pods -n beebox-mobile --kubeconfig dev-k8s-config
+    } || { # catch
+      printf "\n\t dev user does not have permission to list pods. \n"
+    }
+    
+
+    role_contents='
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role # ClusterRole
 metadata:
   name: pod-reader
-  namespace: default # ClusterRoles dont have a namespace, and kind is ClusterRole.
+  namespace: beebox-mobile # ClusterRoles dont have a namespace, and kind is ClusterRole.
 rules:
 - apiGroups: [""]
   resources: ["pods", "pods/log"]
   verbs: ["get", "watch", "list"]
 '
 
-insert_if_not_exists "pod-reader" "${role_contents} /tmp/role.yml
-kubectl apply -f /tmp/role.yml
+    insert_if_not_exists "pod-reader" "${role_contents}" /tmp/role.yml
+    kubectl apply -f /tmp/role.yml
 
 
-role_binding_contents='
+    role_binding_contents='
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: pod-reader
-  name: default # ClusterRoles don't have a namespace, and kind is ClusterRole.
+  name: beebox-mobile
 subjects:
 - kind: User
   name: dev
@@ -141,8 +150,11 @@ roleRef: # what connects this binding. ie we are binding it to the Role called p
   name: pod-reader
   apiGroup: rbac.authorization.k8s.io
 '
-insert_if_not_exists "pod-reader" "${role_binding_contents} /tmp/role-binding.yml
-kubectl apply -f /tmp/role-binding.yml
+    insert_if_not_exists "pod-reader" "${role_binding_contents}" /tmp/role-binding.yml
+    kubectl apply -f /tmp/role-binding.yml
 
+    # dev user should now be able to list pods.
+    kubectl get pods -n beebox-mobile --kubeconfig dev-k8s-config
+}
 
 
