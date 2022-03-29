@@ -2,6 +2,27 @@
 
 set -euo pipefail
 
+insert_if_not_exists() {
+  # This will write something to a text file if it doesnt already exist.
+  # usage:
+  #   insert_if_not_exists "k8s-control-plane" "78.3.21 k8s-control-plane" /etc/hosts
+
+  to_check=$1
+  to_add=$2
+  file=$3
+
+  if grep -q "${to_check}" "${file}"; then
+    # already exists
+    echo -n ""
+  else
+    # append
+    { # try
+      printf "${to_add}" >> "${file}"
+    } || { # catch
+      printf "${to_add}" | sudo tee -a "${file}"
+    }
+  fi
+}
 
 ## chapter 4.
 # Working with kubectl: https://kubernetes.io/docs/reference/kubectl/cheatsheet/
@@ -14,6 +35,7 @@ set -euo pipefail
 #  - kubectl api-resources :lists all the resources/objects in a cluster. This resources can then be used in `kubectl get <resource>`
 
 kubectl_cheatsheet(){
+    set -ex
     # https://kubernetes.io/docs/reference/kubectl/cheatsheet/
     # lists all the resources/objects in a cluster. This resources can then be used in `kubectl get <resource>`
     kubectl api-resources
@@ -78,6 +100,49 @@ kubectl_cheatsheet(){
     kubectl scale deployment my-deployment replicas=5 --record 
     kubectl describe deployment my-deployment # The annotations will have the command that was recorded.
 }
+
+
+# Managing kubernetes role-based access control(RBAC)
+# Control what users are allowed to do and access within the cluster.
+# RBAC objects:
+#  (a) Roles & ClusterRoles: k8s objects that define set of permissions.
+#                            Role define perms in a namespace, ClusterRole define perms cluster-wide.
+#  (b) RoleBinding & ClusterRoleBinding: objects that connect roles and clusterRoles to users.
+#  
+
+role_contents='
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role # ClusterRole
+metadata:
+  name: pod-reader
+  namespace: default # ClusterRoles dont have a namespace, and kind is ClusterRole.
+rules:
+- apiGroups: [""]
+  resources: ["pods", "pods/log"]
+  verbs: ["get", "watch", "list"]
+'
+
+insert_if_not_exists "pod-reader" "${role_contents} /tmp/role.yml
+kubectl apply -f /tmp/role.yml
+
+
+role_binding_contents='
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pod-reader
+  name: default # ClusterRoles don't have a namespace, and kind is ClusterRole.
+subjects:
+- kind: User
+  name: dev
+  apiGroup: rbac.authorization.k8s.io
+roleRef: # what connects this binding. ie we are binding it to the Role called pod-reader created in /tmp/role.yml
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
+'
+insert_if_not_exists "pod-reader" "${role_binding_contents} /tmp/role-binding.yml
+kubectl apply -f /tmp/role-binding.yml
 
 
 
