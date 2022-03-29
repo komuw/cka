@@ -118,7 +118,7 @@ create_rbac(){
       printf "\n\t dev user does not have permission to list pods. \n"
     }
 
-    rm -rf /tmp/role.yml /tmp/role-binding.yml
+    rm -rf /tmp/role.yml /tmp/role_binding.yml
     kubectl get role --all-namespaces
     kubectl get rolebinding --all-namespaces
     
@@ -156,11 +156,74 @@ roleRef:
   name: pod-reader
   apiGroup: rbac.authorization.k8s.io
 '
-    insert_if_not_exists "pod-reader" "${role_binding_contents}" /tmp/role-binding.yml
-    kubectl apply -f /tmp/role-binding.yml
+    insert_if_not_exists "pod-reader" "${role_binding_contents}" /tmp/role_binding.yml
+    kubectl apply -f /tmp/role_binding.yml
 
     # dev user should now be able to list pods.
     sleep 3
     kubectl get pods -n beebox-mobile --kubeconfig dev-k8s-config
 }
+
+
+# Service Accounts:
+#  - what are they? : Account used by container process within pods to authenticate with k8s API.
+#                     If your pod needs comms with k8s API, u can use service account to control their access.
+#  - creating them.
+#  - Binding roles to service accounts.
+#
+# You can manage their access by binding serviceAccounts with ClusterRole or ClusterRoleBinding
+
+create_service_accounts(){
+    set -ex
+
+    rm -rf /tmp/service_account.yml /tmp/service_account_role.yml /tmp/service_account_role_binding.yml
+
+    service_account_contents='
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: my-service-account
+  namespace: beebox-mobile
+'
+    insert_if_not_exists "my-service-account" "${service_account_contents}" /tmp/service_account.yml
+    kubectl apply -f /tmp/service_account.yml
+
+    role_contents='
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-reader
+  namespace: beebox-mobile
+rules:
+- apiGroups: [""]
+  resources: ["pods", "pods/log"]
+  verbs: ["get", "watch", "list"]
+'
+    insert_if_not_exists "pod-reader" "${role_contents}" /tmp/service_account_role.yml
+    kubectl apply -f /tmp/service_account_role.yml
+
+    role_binding_contents='
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sa-pod-reader
+  namespace: beebox-mobile
+subjects:
+- kind: ServiceAccount
+  name: my-service-account
+  namespace: beebox-mobile
+# roleRef is what connects this binding. ie we are binding it to the Role called pod-reader created in /tmp/service_account_role.yml
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
+'
+    insert_if_not_exists "sa-pod-reader" "${role_binding_contents}" /tmp/service_account_role_binding.yml
+    kubectl apply -f /tmp/service_account_role_binding.yml
+
+    # check the service_account we created.
+    kubectl describe serviceaccount my-service-account --namespace=beebox-mobile
+}
+
+
 
