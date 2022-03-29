@@ -227,3 +227,48 @@ roleRef:
 
 
 
+# Pod resource usage:
+#  - k8s metrics server: An addon that collects and provides metric data. This is one of many other such addons.
+#  - kubectl top
+install_k8s_metrics_server(){
+    set -ex
+
+    rm -rf /tmp/pod.yml
+
+    # The one from this URL is a custom one that works with clusters created using kubeadm.
+    # The default one does not work with kubeadm clusters.
+    kubectl apply -f https://raw.githubusercontent.com/linuxacademy/content-cka-resources/master/metrics-server-components.yaml
+
+    # query to make sure install worked.
+    sleep 2
+    kubectl get --raw /apis/metrics.k8s.io/
+
+    pod_contents="
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+  namespace: beebox-mobile
+  labels:
+    app: metrics-test
+spec:
+  containers:
+  - name: busybox
+    image: radial/busyboxplus:curl
+    command: ['sh', '-c', 'while true; do sleep 3600; done']
+"
+    insert_if_not_exists "my-pod" "${pod_contents}" /tmp/pod.yml
+    kubectl apply -f /tmp/pod.yml
+
+    kubectl get pods
+
+    # It can take a few mins for metric-server to collect data.
+    # You might get an error if server has not collected data.
+    sleep 3
+    kubectl top pod --sort-by cpu
+    kubectl top node
+}
+
+
+
+
