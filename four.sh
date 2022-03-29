@@ -120,11 +120,12 @@ create_rbac(){
     
 
     role_contents='
+# ClusterRoles dont have a namespace, and kind is ClusterRole.
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role # ClusterRole
+kind: Role
 metadata:
   name: pod-reader
-  namespace: beebox-mobile # ClusterRoles dont have a namespace, and kind is ClusterRole.
+  namespace: beebox-mobile
 rules:
 - apiGroups: [""]
   resources: ["pods", "pods/log"]
@@ -140,12 +141,12 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: pod-reader
-  name: beebox-mobile
+  namespace: beebox-mobile
 subjects:
 - kind: User
   name: dev
   apiGroup: rbac.authorization.k8s.io
-roleRef: # what connects this binding. ie we are binding it to the Role called pod-reader created in /tmp/role.yml
+roleRef:
   kind: Role
   name: pod-reader
   apiGroup: rbac.authorization.k8s.io
