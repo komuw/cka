@@ -109,7 +109,7 @@ kubectl_cheatsheet(){
 #                            Role define perms in a namespace, ClusterRole define perms cluster-wide.
 #  (b) RoleBinding & ClusterRoleBinding: objects that connect roles and clusterRoles to users.
 #  
-kubectl_cheatsheet(){
+create_rbac(){
     set -ex
 
     { # try
@@ -156,5 +156,4 @@ roleRef: # what connects this binding. ie we are binding it to the Role called p
     # dev user should now be able to list pods.
     kubectl get pods -n beebox-mobile --kubeconfig dev-k8s-config
 }
-
 
