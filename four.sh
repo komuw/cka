@@ -146,6 +146,7 @@ subjects:
 - kind: User
   name: dev
   apiGroup: rbac.authorization.k8s.io
+# roleRef is what connects this binding. ie we are binding it to the Role called pod-reader created in /tmp/role.yml
 roleRef:
   kind: Role
   name: pod-reader
