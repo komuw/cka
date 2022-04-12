@@ -45,13 +45,13 @@ kubectl_cheatsheet(){
     kubectl get pods --all-namespaces
 
     # describe a pod
-    kubectl describe pod --namespace=ara-dev controller-ara-69d7876896-pml5q
+    kubectl describe pod --namespace=hey-dev nginx-hey-69d7876896-pml5q
 
     # fetch logs(selecting by labels)
-    kubectl logs -f --namespace=ara-dev -l app.kubernetes.io/instance=ara --all-containers=true --max-log-requests=21
-    kubectl logs -f --namespace=ara-dev -l app.kubernetes.io/component=billing --all-containers=true
-    kubectl logs -f --namespace=ara-dev -l app.kubernetes.io/component=controller --all-containers=true
-    kubectl logs -f --namespace=ara-dev -l app.kubernetes.io/component=dashboard --all-containers=true
+    kubectl logs -f --namespace=hey-dev -l app.kubernetes.io/instance=hey --all-containers=true --max-log-requests=21
+    kubectl logs -f --namespace=hey-dev -l app.kubernetes.io/component=billing --all-containers=true
+    kubectl logs -f --namespace=hey-dev -l app.kubernetes.io/component=controller --all-containers=true
+    kubectl logs -f --namespace=hey-dev -l app.kubernetes.io/component=dashboard --all-containers=true
 
     # exec into a pod
     kubectl exec --stdin --tty my-pod -- /bin/sh                  # 1 container case
@@ -73,8 +73,8 @@ kubectl_cheatsheet(){
     # secrets
     kubectl get secrets --all-namespaces
     kubectl describe secret --namespace=namespace <secret_name>
-    kubectl get secret --namespace=foobarbaz-bingbong ara-home -o yaml
-    kubectl get secret --namespace=foobarbaz-bingbong ara-home --template={{.data.mongoCS}} | base64 -d
+    kubectl get secret --namespace=foobarbaz-bingbong hey-home -o yaml
+    kubectl get secret --namespace=foobarbaz-bingbong hey-home --template={{.data.mongoCS}} | base64 -d
 
     # networkPolicy
     kubectl get networkpolicy --all-namespaces
