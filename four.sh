@@ -39,6 +39,12 @@ kubectl_cheatsheet(){
     # https://kubernetes.io/docs/reference/kubectl/cheatsheet/
     # lists all the resources/objects in a cluster. This resources can then be used in `kubectl get <resource>`
     kubectl api-resources
+    
+    # use a different kubeconfig
+    kubectl --kubeconfig=/path/to/kubeconfig.yaml get pods
+    export KUBECONFIG=/path/to/kubeconfig.yaml kubectl get pods
+    kubectl config view # show the kubeconfig in use
+    
 
     # get pods/services
     kubectl get services --all-namespaces
