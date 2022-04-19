@@ -203,6 +203,15 @@ deb https://apt.kubernetes.io/ kubernetes-xenial main
   kubectl get pods --all-namespaces
 }
 
+14_one_node_cluster(){
+  set -ex
+  # allow all nodes(including control-plane) to be used as a worker node.
+  kubectl taint nodes --all node-role.kubernetes.io/master-
+
+  # allow node named `node-one` to be used as a worker node.
+  # kubectl taint nodes node-one node-role.kubernetes.io/master-
+}
+
 
 control_plane_nodes(){
   1_install_pre_requistes
