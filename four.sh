@@ -44,6 +44,7 @@ kubectl_cheatsheet(){
     kubectl --kubeconfig=/path/to/kubeconfig.yaml get pods
     export KUBECONFIG=/path/to/kubeconfig.yaml kubectl get pods
     kubectl config view # show the kubeconfig in use
+    kubectl config view --raw # show whole config. You can send this to another computer and use kubectl in that computer to access the cluster.
     
 
     # get pods/services
