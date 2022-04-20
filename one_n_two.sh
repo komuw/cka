@@ -164,6 +164,10 @@ deb https://apt.kubernetes.io/ kubernetes-xenial main
 9_intialize_cluster(){
   set -ex
   # intialize cluster(This only needs to be done in the control-plane node/s)
+  # pod-network-cidr is the IP prefix for all pods in the Kubernetes cluster.
+  # The newtork range chosen must not clash with other networks in your VPC
+  # `192.168.0.0/16` was taken from the calico docs:
+  # https://projectcalico.docs.tigera.io/getting-started/kubernetes/hardway/standing-up-kubernetes
   sudo kubeadm init --pod-network-cidr 192.168.0.0/16 --kubernetes-version 1.23.0 # this command will output some further directions on what to do next.
   setup_kube_config(){
       # This is an example of the instructions emitted by the `kubeadm init` command
