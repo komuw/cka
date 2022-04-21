@@ -88,6 +88,9 @@ kubectl_cheatsheet(){
     kubectl get networkpolicy --namespace=foobarbaz-bingbong <name>
     kubectl describe networkpolicy --namespace=foobarbaz-bingbong <name>
 
+    # endpoints
+    kubectl get endpoint --all-namespaces # really good to see which services map to which pods and their IPs
+
     # create a pod for testing. This one has ping,telnet,wget etc already installed.
     # Note; you can specify labels, namespace etc.
     # eg for this case, we run it in kube-system namespace bcoz we want to test wether we can ping a pod from the kube-system NS
