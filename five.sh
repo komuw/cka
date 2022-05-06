@@ -115,6 +115,22 @@ spec:
     kubectl apply -f /tmp/my_pod_env_vars.yml
     kubectl describe pod my-pod-env-vars | tail
     kubectl logs my-pod-env-vars
+    LOGS_RESP=$(kubectl logs --tail=100 my-pod-env-vars)
+    if grep -q "val1" <<< $LOGS_RESP; then
+        # exists
+        echo -n ""
+    else
+        printf "\n\t required string not found in log output \n"
+        exit 77;
+    fi
+
+    if grep -q "heyPasswd" <<< $LOGS_RESP; then
+        # exists
+        echo -n ""
+    else
+        printf "\n\t required string not found in log output \n"
+        exit 77;
+    fi
 
 
     my_pod_volume_contents="
@@ -126,22 +142,19 @@ spec:
   containers:
   - name: busybox
     image: busybox
+    # there should be a file in /tmp/alas/hey-conf for each key inside the configMap.
+    # there should be a file in /tmp/alas/hey-secret for each key inside the Secret.
     command: [
         'sh',
         '-c', 
         '
         set -x;
-        echo;
-        # there should be a file in /tmp/alas/hey-conf for each key inside the configMap.
         ls -lsha /tmp/alas/hey-conf;
-        echo;
-        # there should be a file in /tmp/alas/hey-secret for each key inside the Secret.
         ls -lsha /tmp/alas/hey-secret;
-        echo;
         sleep 2;
         cat /tmp/alas/hey-conf/key1;
         cat /tmp/alas/hey-conf/key3;
-        echo;
+        sleep 2;
         cat /tmp/alas/hey-secret/username;
         cat /tmp/alas/hey-secret/password;
         '
@@ -163,8 +176,22 @@ spec:
     kubectl apply -f /tmp/my_pod_volume.yml
     kubectl describe pod my-pod-volume | tail
     kubectl logs --tail=100 my-pod-volume
+
+    LOGS_RESP=$(kubectl logs --tail=100 my-pod-volume)
+    if grep -q "val1" <<< $LOGS_RESP; then
+        # exists
+        echo -n ""
+    else
+        printf "\n\t required string not found in log output \n"
+        exit 77;
+    fi
+
+    if grep -q "heyPasswd" <<< $LOGS_RESP; then
+        # exists
+        echo -n ""
+    else
+        printf "\n\t required string not found in log output \n"
+        exit 77;
+    fi
 }
-
-
-
 
