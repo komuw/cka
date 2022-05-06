@@ -46,10 +46,10 @@ app_config(){
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: my-confMap
+  name: my-confmap
 data:
   key1: val1
-  key2:
+  key2: |
     subKey:
       more: data
       evenmore: some more data
@@ -57,8 +57,9 @@ data:
     You can also do
     multi-line
 '
-    insert_if_not_exists "my-confMap" "${configmap_contents}" /tmp/my_configmap.yml
+    insert_if_not_exists "my-confmap" "${configmap_contents}" /tmp/my_configmap.yml
     kubectl apply -f /tmp/my_configmap.yml
+    kubectl get configmap
 
     secret_contents='
 apiVersion: v1
@@ -76,6 +77,7 @@ data:
     sed -i.bak "s/username-placeholder/$username/" /tmp/my_secret.yml
     sed -i.bak "s/password-placeholder/$password/" /tmp/my_secret.yml
     kubectl apply -f /tmp/my_secret.yml
+    kubectl get secret
 
     my_pod_env_vars_contents=`
 apiVersion: v1
@@ -100,7 +102,7 @@ spec:
     - name: CONFIMAP_ENV_VAR
       valueFrom:
         configMapKeyRef:
-          name: my-confMap # should match the metadata.name of the /tmp/my_configmap.yml
+          name: my-confmap # should match the metadata.name of the /tmp/my_configmap.yml
           key: key1
     - name: SECRET_ENV_VAR
       valueFrom:
@@ -148,7 +150,7 @@ spec:
   volumes:
   - name: configmap-volume
     configMap:
-      name: my-confMap  # should match the metadata.name of the /tmp/my_configmap.yml
+      name: my-confmap  # should match the metadata.name of the /tmp/my_configmap.yml
   - name: secret-volume
     secret:
       secretName: my-secret  # should match the metadata.name of the /tmp/my_secret.yml
@@ -158,5 +160,6 @@ spec:
     kubectl apply -f /tmp/my_pod_volume.yml
     kubectl logs my-pod-volume
 }
+
 
 
