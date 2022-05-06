@@ -79,7 +79,7 @@ data:
     kubectl apply -f /tmp/my_secret.yml
     kubectl get secret
 
-    my_pod_env_vars_contents=`
+    my_pod_env_vars_contents="
 apiVersion: v1
 kind: Secret
 metadata:
@@ -93,11 +93,12 @@ spec:
         '-c', 
         '
         set -x;
-        echo "";
-        echo "configmap: $CONFIMAP_ENV_VAR secret: $SECRET_ENV_VAR";
-        echo "";
+        echo '';
+        echo 'configmap: \$CONFIMAP_ENV_VAR secret: \$SECRET_ENV_VAR';
+        echo '';
         sleep 2;
         '
+        ]
     env:
     - name: CONFIMAP_ENV_VAR
       valueFrom:
@@ -110,13 +111,13 @@ spec:
           name: my-secret # should match the metadata.name of the /tmp/my_secret.yml
           key: password
     ]
-`
+"
     insert_if_not_exists "my-pod-env-vars" "${my_pod_env_vars_contents}" /tmp/my_pod_env_vars.yml
     kubectl apply -f /tmp/my_pod_env_vars.yml
     kubectl logs my-pod-env-vars
 
 
-    my_pod_volume_contents=`
+    my_pod_volume_contents="
 apiVersion: v1
 kind: Secret
 metadata:
@@ -130,18 +131,19 @@ spec:
         '-c', 
         '
         set -x;
-        echo "";
+        echo '';
         ls -lsha /tmp/alas/hey-conf; # there should be a file in /tmp/alas/hey-conf for each key inside the configMap.
-        echo "";
+        echo '';
         ls -lsha /tmp/alas/hey-secret; # there should be a file in /tmp/alas/hey-secret for each key inside the Secret.
-        echo "";
+        echo '';
         sleep 2;
         cat /tmp/alas/hey-conf/key1;
         cat /tmp/alas/hey-conf/key3;
-        echo "";
+        echo '';
         cat /tmp/alas/hey-secret/username;
         cat /tmp/alas/hey-secret/password;
         '
+        ]
     volumeMounts:
     - name: configmap-volume
       mountPath: /tmp/alas/hey-conf
@@ -155,11 +157,10 @@ spec:
     secret:
       secretName: my-secret  # should match the metadata.name of the /tmp/my_secret.yml
     ]
-`
+"
     insert_if_not_exists "my-pod-volume" "${my_pod_volume_contents}" /tmp/my_pod_volume.yml
     kubectl apply -f /tmp/my_pod_volume.yml
     kubectl logs my-pod-volume
 }
-
 
 
