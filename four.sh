@@ -50,6 +50,7 @@ kubectl_cheatsheet(){
     # get pods/services
     kubectl get services --all-namespaces
     kubectl get pods --all-namespaces
+    kubectl get deployment myDeploy --namespace=hey-dev --output=yaml # get yaml output of a resource, you can then pass it to kubectl apply -f
 
     # describe a pod
     kubectl describe pod --namespace=hey-dev nginx-hey-69d7876896-pml5q
