@@ -132,9 +132,11 @@ spec:
         '
         set -x;
         echo;
-        ls -lsha /tmp/alas/hey-conf; # there should be a file in /tmp/alas/hey-conf for each key inside the configMap.
+        # there should be a file in /tmp/alas/hey-conf for each key inside the configMap.
+        ls -lsha /tmp/alas/hey-conf;
         echo;
-        ls -lsha /tmp/alas/hey-secret; # there should be a file in /tmp/alas/hey-secret for each key inside the Secret.
+        # there should be a file in /tmp/alas/hey-secret for each key inside the Secret.
+        ls -lsha /tmp/alas/hey-secret;
         echo;
         sleep 2;
         cat /tmp/alas/hey-conf/key1;
@@ -159,11 +161,9 @@ spec:
 "
     insert_if_not_exists "my-pod-volume" "${my_pod_volume_contents}" /tmp/my_pod_volume.yml
     kubectl apply -f /tmp/my_pod_volume.yml
-    kubectl logs my-pod-volume
+    kubectl describe pod my-pod-volume | tail
+    kubectl logs --tail=100 my-pod-volume
 }
-
-
-
 
 
 
