@@ -39,7 +39,7 @@ insert_if_not_exists() {
 # 5. into to init containers.
 
 
-todo(){
+app_config(){
     set -ex
 
     configmap_contents='
@@ -57,6 +57,8 @@ data:
     You can also do
     multi-line
 '
+    insert_if_not_exists "my-confMap" "${configmap_contents}" /tmp/my_configmap.yml
+    kubectl apply -f /tmp/my_configmap.yml
 
     secret_contents='
 apiVersion: v1
@@ -65,27 +67,96 @@ metadata:
   name: my-secret
 type: Opaque
 data:
-  user: base64.encode(john)
-  password: base64.encode(mypass)
+  username: username-placeholder
+  password: password-placeholder
 '
+    insert_if_not_exists "my-secret" "${secret_contents}" /tmp/my_secret.yml
+    username=$(echo "John" | base64)
+    password=$(echo "heyPasswd" | base64)
+    sed -i.bak "s/username-placeholder/$username/" /tmp/my_secret.yml
+    sed -i.bak "s/password-placeholder/$password/" /tmp/my_secret.yml
+    kubectl apply -f /tmp/my_secret.yml
 
-    pod_snippet='
-...
+    my_pod_env_vars_contents=`
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-pod-env-vars
 spec:
   containers:
-  - ...
+  - name: busybox
+    image: busybox
+    command: [
+        'bash',
+        '-c', 
+        '
+        set -x;
+        echo "";
+        echo "configmap: $CONFIMAP_ENV_VAR secret: $SECRET_ENV_VAR";
+        echo "";
+        sleep 2;
+        '
     env:
-    - name: HEY
+    - name: CONFIMAP_ENV_VAR
       valueFrom:
         configMapKeyRef:
-          name: my-confMap
+          name: my-confMap # should match the metadata.name of the /tmp/my_configmap.yml
           key: key1
-    ...
-    volumes:
-    - name: secret-vol
-      secret:
-        secretName: my-secret
-'
+    - name: SECRET_ENV_VAR
+      valueFrom:
+        secretKeyRef:
+          name: my-secret # should match the metadata.name of the /tmp/my_secret.yml
+          key: password
+    ]
+`
+    insert_if_not_exists "my-pod-env-vars" "${my_pod_env_vars_contents}" /tmp/my_pod_env_vars.yml
+    kubectl apply -f /tmp/my_pod_env_vars.yml
+    kubectl logs my-pod-env-vars
 
+
+    my_pod_volume_contents=`
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-pod-volume
+spec:
+  containers:
+  - name: busybox
+    image: busybox
+    command: [
+        'bash',
+        '-c', 
+        '
+        set -x;
+        echo "";
+        ls -lsha /tmp/alas/hey-conf; # there should be a file in /tmp/alas/hey-conf for each key inside the configMap.
+        echo "";
+        ls -lsha /tmp/alas/hey-secret; # there should be a file in /tmp/alas/hey-secret for each key inside the Secret.
+        echo "";
+        sleep 2;
+        cat /tmp/alas/hey-conf/key1;
+        cat /tmp/alas/hey-conf/key3;
+        echo "";
+        cat /tmp/alas/hey-secret/username;
+        cat /tmp/alas/hey-secret/password;
+        '
+    volumeMounts:
+    - name: configmap-volume
+      mountPath: /tmp/alas/hey-conf
+    - name: secret-volume
+      mountPath: /tmp/alas/hey-secret
+  volumes:
+  - name: configmap-volume
+    configMap:
+      name: my-confMap  # should match the metadata.name of the /tmp/my_configmap.yml
+  - name: secret-volume
+    secret:
+      secretName: my-secret  # should match the metadata.name of the /tmp/my_secret.yml
+    ]
+`
+    insert_if_not_exists "my-pod-volume" "${my_pod_volume_contents}" /tmp/my_pod_volume.yml
+    kubectl apply -f /tmp/my_pod_volume.yml
+    kubectl logs my-pod-volume
 }
+
 
