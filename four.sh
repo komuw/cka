@@ -91,6 +91,10 @@ kubectl_cheatsheet(){
 
     # endpoints
     kubectl get endpoint --all-namespaces # really good to see which services map to which pods and their IPs
+    
+    # get events
+    kubectl get events --all-namespaces
+    kubectl get events --all-namespaces --field-selector type!=Normal # get the ones that are troublesome
 
     # create a pod for testing. This one has ping,telnet,wget etc already installed.
     # Note; you can specify labels, namespace etc.
