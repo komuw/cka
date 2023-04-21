@@ -155,8 +155,8 @@ deb https://apt.kubernetes.io/ kubernetes-xenial main
 "
   insert_if_not_exists "kubernetes-xenial" "${kubernetes_sources_contents}" /etc/apt/sources.list.d/kubernetes.list
   sudo apt -y update && \
-  sudo apt -y install kubelet=1.23.0-00 \
-                      kubeadm=1.23.0-00 \
+  sudo apt -y install kubeadm=1.23.0-00 \
+                      kubelet=1.23.0-00 \
                       kubectl=1.23.0-00
   sudo apt-mark hold kubelet kubeadm kubectl # prevent automatic upgrades.
 }
@@ -245,7 +245,7 @@ worker_nodes(){
 }
 
 # Namespaces:
-# They are virtual clusters backed by the same physical cluster. k8s objects(pods/containers etc) libve in namespaces.
+# They are virtual clusters backed by the same physical cluster. k8s objects(pods/containers etc) live in namespaces.
 kubectl get namespaces; # to list namespaces
 kubectl create namespace my-namespace; # to create namespace.
 kubectl get pods --namespace=kube-system; # specify a namespace
