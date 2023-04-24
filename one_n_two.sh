@@ -12,12 +12,12 @@ set -euo pipefail
 # 4. Storage.
 # 5. Troubleshooting.
 
-# For the CKA exam, the ubuntu version and k8 version in use is changed periodically.
+# For the CKA exam, the ubuntu version and k8s version in use is changed periodically.
 # At time of writing(23/march/2022), they use: ubuntu20.04 & k8s v1.23
 
 
 ## chapter 2.
-# k8 features:
+# k8s features:
 # (a) container orchestration: dynamically manage containers across multiple hosts.
 # (b) app reliability: make it easier to build self-healing & scalable apps.
 # (c) automation: offer utilities to automate mgnt of container apps.
