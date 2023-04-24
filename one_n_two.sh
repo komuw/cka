@@ -73,7 +73,9 @@ insert_if_not_exists() {
   sudo apt -y update
   sudo apt -y install \
                     apt-transport-https \
-                    curl # curl & apt-transport-https are required, the others are just here for debugging purposes.
+                    curl
+
+  # curl & apt-transport-https are required, the others are just here for debugging purposes.
   sudo apt -y install \
                     procps \
                     psmisc \
