@@ -36,7 +36,7 @@ insert_if_not_exists() {
 # 2. managing container resources(cpu, mem, etc)
 # 3. monitoring container health with probes.
 # 4. building self-healing pods with restart policies.
-# 5. into to init containers.
+# 5. intro to init containers.
 
 
 app_config(){
