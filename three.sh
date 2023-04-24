@@ -145,14 +145,15 @@ backup_etcd(){
                 --key=${CERT_KEY_LOCATION})
     printf "\n\t CLUSTER_NAME is: ${CLUSTER_NAME} \n"
 
-    ETCDCTL_API=3 etcdctl \
-        snapshot \
-        save \
-        ${BACKUP_FILE} \
-        --endpoints=https://${NODE_PRIVATE_IP}:${BACKUP_PORT} \
-        --cacert=${CA_CERT_LOCATION} \
-        --cert=${CERT_LOCATION} \
-        --key=${CERT_KEY_LOCATION}
+    ETCDCTL_API=3 \
+      etcdctl \
+          snapshot \
+          save \
+          ${BACKUP_FILE} \
+          --endpoints=https://${NODE_PRIVATE_IP}:${BACKUP_PORT} \
+          --cacert=${CA_CERT_LOCATION} \
+          --cert=${CERT_LOCATION} \
+          --key=${CERT_KEY_LOCATION}
 }
 
 restore_etcd(){
@@ -168,14 +169,15 @@ restore_etcd(){
     CERT_KEY_LOCATION=$6
     BACKUP_FILE=$7
 
-    ETCDCTL_API=3 sudo etcdctl \
-    snapshot \
-    restore \
-    ${BACKUP_FILE} \
-    --initial-cluster etcd-restore=https://${NODE_PRIVATE_IP}:${RESTORE_PORT} \
-    --initial-advertise-peer-urls https://${NODE_PRIVATE_IP}:${RESTORE_PORT} \
-    --name etcd-restore \
-    --data-dir /var/lib/etcd
+    ETCDCTL_API=3 \
+    sudo etcdctl \
+      snapshot \
+      restore \
+      ${BACKUP_FILE} \
+      --initial-cluster etcd-restore=https://${NODE_PRIVATE_IP}:${RESTORE_PORT} \
+      --initial-advertise-peer-urls https://${NODE_PRIVATE_IP}:${RESTORE_PORT} \
+      --name etcd-restore \
+      --data-dir /var/lib/etcd
 
     sudo chown -R etcd:etcd /var/lib/etcd
 
