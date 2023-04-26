@@ -84,7 +84,7 @@ kubectl_cheatsheet(){
     # secrets
     kubectl get secrets --all-namespaces
     kubectl describe secret --namespace=namespace <secret_name>
-    kubectl get secret --namespace=foobarbaz-bingbong hey-home -o yaml
+    kubectl get secret --namespace=foobarbaz-bingbong hey-home -o yaml # You can also add `--export` to remove unneccesary data.
     kubectl get secret --namespace=foobarbaz-bingbong hey-home --template={{.data.mongoCS}} | base64 -d
 
     # networkPolicy
@@ -113,6 +113,7 @@ kubectl_cheatsheet(){
 
     # get a sample yaml file quickly. This yaml file can then be used in later commands.
     kubectl create deployment my-deployment --image=nginx --dry-run -o yaml
+    kubectl create deployment my-deployment --image=nginx --dry-run --export -o yaml > /tmp/mytmpl.yaml # export removes unneccesary data.
 
     # record the command that was used to make a change.
     kubectl scale deployment my-deployment replicas=5 --record 

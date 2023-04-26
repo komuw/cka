@@ -195,3 +195,136 @@ spec:
     fi
 }
 
+# Managing container resources.
+# - resource requests: Allow u to define amt of resources(cpu/mem/etc) that container will use.
+#                      Scheduler will use those to avoid scheduling pods on nodes that don't have available resources.
+#                      Containers are allowed to use more resources than requested. Resource request only affects scheduling.
+# - resource limits: Limit amt of resources a container can use. Container runtime enforces this limits(eg by terminating container.)
+manage_container_resources(){
+    pod_contents="
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+  - name: busybox
+    image: radial/busyboxplus:curl
+    resources:
+      requests:
+        memory: 120M
+        cpu: 80m
+      limits:
+        memory: 250M
+        cpu: 150m
+"
+}
+
+# Monitoring Container health with probes.
+# k8s needs to be able to determine the status of your app. This means actively monitoring container health.
+# - liveness probes:  Determine whether container is in healthy state. We can customize this to suit our app.
+# - startup probes:   Similar to liveness-probes except that this only run at startup.
+# - readiness probes: Determine when container is ready to start accepting requests.
+health_probing(){
+    pod_contents="
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+  - name: busybox
+    image: radial/busyboxplus:curl
+    livenessProbe:
+      exec: # others are; `httpGet`, `tcpSocket`, `grpc`, etc.
+        command: ["echo", "hello"]
+      initialDelaySeconds: 5
+      periodSeconds: 5
+    startupProbe:
+      httpGet:
+        path: /
+        port: 80
+      failureThreshold: 30
+      periodSeconds: 10
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 80
+      failureThreshold: 5
+      periodSeconds: 5
+"
+}
+
+# Building self-healing pods with restart policies.
+# They control what happens when pods fail. 
+# - Always:     The default. Containers are restarted, after they stop, even if they stopped with a success exit code.
+# - OnFailure:  Restarts only if process exits with error code or if determined to be unhealthy via liveness probe.
+# - Never:      Self explanatory.
+restart_policies(){
+    pod_contents="
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  restartPolicy: OnFailure
+  containers:
+  - name: busybox
+    image: radial/busyboxplus:curl
+"
+}
+
+# Creating multi-container pods.
+# This is a pod with more than one container.
+# The containers share resources such as network & storage.
+# It is a good idea to keep containers in separate pods UNLESS they need to share resources.
+# Example usecase: You have a container that logs to a file on disk.
+#                  So you add another container(sidecar) that reads that logfile(since they share resouces) & prints it to console(so that the logs appear in container logs.)
+multi_container_pod(){
+    pod_contents="
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+  - name: logToDisk
+    image: busybox
+    command: ['sh', '-c', 'while true; do echo logs-data > /output/out.log; sleep 5; done']
+    volumeMounts:
+    - name: sharedVol
+      mountPath: /output
+  - name: logCollector
+    image: busybox
+    command: ['sh', '-c', 'tail -f /input/out.log']
+    volumeMounts:
+    - name: sharedVol
+      mountPath: /input
+  volumes:
+  - name: sharedVol
+    emptyDir: {}
+"
+}
+
+# Intro to init containers.
+# Containers that run ONCE during the startup process of a pod. They can be multiple of them.
+# Example usecase:
+#   - perform sensiive startup steps securely outside of app containers.
+#   - cause pod to wait for another k8s resource to be created.
+#   - populate data into a shared volume.
+add_init_container(){
+    pod_contents="
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+  - name: busybox
+    image: busybox
+  initContainers:
+  - name: delay
+    image: busybox
+    command: ['sleep', '25']
+"
+}
