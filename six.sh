@@ -35,7 +35,7 @@ insert_if_not_exists() {
 # Scheduling is process of assigning pods to nodes so that kubelet can run them.
 # Scheduler is the control-plane component that handles scheduling. The things that a Scheduler takes into account are;
 #   - resouce requests vs available node resouces.
-#   - various configurations that affect scheduling using node labels.
+#   - various configurations that affect scheduling eg, using node labels.
 #
 # - nodeSelector: A thing that can be configured on pods to limit which nodes the pod can be scheduled on.
 #                 It uses node labels to filter suitable nodes.
