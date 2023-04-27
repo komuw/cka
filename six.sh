@@ -37,7 +37,7 @@ insert_if_not_exists() {
 #   - resouce requests vs available node resouces.
 #   - various configurations that affect scheduling eg, using node labels.
 #
-# - nodeSelector: A thing that can be configured on pods to limit which nodes the pod can be scheduled on.
+# - nodeSelector: Pod onfiguration to limit which nodes the pod can be scheduled on.
 #                 It uses node labels to filter suitable nodes.
 # - nodeName:     Assign a pod to a specific node by name, thus bypassing scheduling.
 nodeSelector_pod(){
