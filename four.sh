@@ -24,7 +24,8 @@ insert_if_not_exists() {
   fi
 }
 
-## chapter 4.
+## chapter 4. Kubernetes Object Management.
+
 # Working with kubectl: https://kubernetes.io/docs/reference/kubectl/cheatsheet/
 #  - kubectl get           : list objects in cluster.
 #  - kubectl describe      : detailed info about objects.

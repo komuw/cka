@@ -24,8 +24,8 @@ insert_if_not_exists() {
   fi
 }
 
-## chapter 5.
-# pods and containers.
+## chapter 5. Pods and Containers.
+
 # 1. managing app config: dynamic vars that are passed to apps at runtime.
 #      - configMaps.
 #      - secrets.

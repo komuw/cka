@@ -25,6 +25,7 @@ insert_if_not_exists() {
 }
 
 ## chapter 6: Advanced pod Allocation.
+
 # 1. Exploring k8s scheduling.
 # 2. Using daemonsets.
 # 3. Using static pods.

@@ -3,7 +3,8 @@
 set -euo pipefail
 
 
-## chapter 3.
+## chapter 3. Cluster management.
+
 # K8s management:
 # - Intro to high availability.
 # - Intro to k8s management tools.

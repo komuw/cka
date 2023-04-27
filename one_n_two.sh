@@ -3,7 +3,7 @@
 set -euo pipefail
 
 
-## chapter 1.
+## chapter 1. Intro & Getting Started.
 
 # In this course we will cover:
 # 1. Cluster architecture, installation & configuration.
