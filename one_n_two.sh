@@ -185,7 +185,10 @@ deb https://apt.kubernetes.io/ kubernetes-xenial main
 10_setup_calico(){
   set -ex
   # setup k8s networking(on control-plane nodes). We will use calico, but there are a bunch of other that you can use.
-  kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+  kubectl apply -f https://docs.projectcalico.org/v3.24.5manifests/calico.yaml
+
+  # Seems like the calico link does not work. This is coz they appear to have move to using operator as shown below:
+  # kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.1/manifests/tigera-operator.yaml
 }
 
 11_fetch_join_token(){
