@@ -279,7 +279,7 @@ spec:
 # The containers share resources such as network & storage.
 # It is a good idea to keep containers in separate pods UNLESS they need to share resources.
 # Example usecase: You have a container that logs to a file on disk.
-#                  So you add another container(sidecar) that reads that logfile(since they share resouces) & prints it to console(so that the logs appear in container logs.)
+#                  So you add another container(sidecar) that reads that logfile(since they share resources) & prints it to console(so that the logs appear in container logs.)
 multi_container_pod(){
     pod_contents="
 apiVersion: v1

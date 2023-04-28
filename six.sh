@@ -34,7 +34,7 @@ insert_if_not_exists() {
 # 1. Exploring k8s scheduling.
 # Scheduling is process of assigning pods to nodes so that kubelet can run them.
 # Scheduler is the control-plane component that handles scheduling. The things that a Scheduler takes into account are;
-#   - resouce requests vs available node resouces.
+#   - resource requests vs available node resources.
 #   - various configurations that affect scheduling eg, using node labels.
 #
 # - nodeSelector: Pod onfiguration to limit which nodes the pod can be scheduled on.
