@@ -36,7 +36,7 @@ insert_if_not_exists() {
 # They provide network connectivity between pods according to the k8s network model.
 # k8s nodes will remain in the `NotReady` status until a network plugin is installed.
 
-# Dns in k8s:
+# DNS in k8s:
 # The k8s virtual network uses DNS to allow pods to locate other pods & services, instead of using IP addresses.
 # It runs as a service in the cluster; its components can be found in the `kube-system` namespace.
 # kubeadm uses `CoreDNS`.
@@ -49,12 +49,12 @@ insert_if_not_exists() {
 # By default, pods are considered open to all communication.
 #   - spec.podSelector: determines which pods in the namespace, the NetworkPolicy applies to.
 #
-# Once a NetworkPolicy selects a pod, it be isolated and only open to traffic allowed by that NetworkPolicy
+# Once a NetworkPolicy selects a pod, it will be isolated and only open to traffic allowed by that NetworkPolicy
 # NetworkPolicy can apply to Ingress(incoming traffic to the pod), Egress(outgoing traffic from pod) or both.
 #   - from selector: selects Ingress traffic that will be allowed.
 #   - to selector:   selects Egress traffic that will be allowed.
 #   - podSelector:   selects pods to allow traffic from/to
-#   - namespaceSelector: select ns to allow traffic from/to
+#   - namespaceSelector: select namespace to allow traffic from/to
 #   - ipBlock: select an IP range to allow traffic from/to
 #   - port: specifies one or more ports that will allow traffic.
 my_network_policy(){
@@ -86,7 +86,7 @@ spec:
     image: busybox
 "
 
-    # This NetworkPolicy will block all comms to the pods with the given label.
+    # This NetworkPolicy will block all comms to the pods with the given label/s.
     # This is because the NP does not have an `ingress.from` or `egress.to` section.
     lockdown_np_contents="
 apiVersion: networking.k8s.io/v1
