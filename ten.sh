@@ -128,6 +128,3 @@ spec:
       claimName: my-pvc # Should match the PVC metadata.name
 "
 }
-
-
-

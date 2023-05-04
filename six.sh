@@ -109,5 +109,3 @@ spec:
     # You can wait a little while and kubelet will automatically start the pod.
     # Alternatively; restart kubelet: `sudo systemctl restart kubelet`
 }
-
-

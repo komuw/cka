@@ -150,4 +150,3 @@ spec:
 # Client -> Ingress-Controller -> Ingress -> Service -> NetworkPolicy -> | Pod1 |
 #                                                                        | Pod2 |
 #                                                                      | Deployment |
-

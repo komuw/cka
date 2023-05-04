@@ -288,4 +288,3 @@ spec:
     kubectl top pod --sort-by cpu --all-namespaces
     kubectl top node
 }
-
