@@ -91,7 +91,7 @@ spec:
     app: app-workers
   ports:
     - protocol: TCP
-      port: 80        # the service's port.
+      port: 80        # the service's port. It is usually set to same value as `targetPort`.
       targetPort: 80  # the port where the pods are listening at.
       nodePort: 30080 # the port on the server/nodes. You can access this port on ANY node(cp or workers) and it will just work. Has to be in range 30_000 - 32_767.
 "
