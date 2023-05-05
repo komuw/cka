@@ -82,6 +82,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: web-frontend-ingress
+  namespace: web
 spec:
   rules:
   - http:
