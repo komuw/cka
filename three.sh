@@ -179,6 +179,7 @@ restore_etcd(){
       --initial-advertise-peer-urls https://${NODE_PRIVATE_IP}:${RESTORE_PORT} \
       --name etcd-restore \
       --data-dir /var/lib/etcd
+    # The name `etcd-restore` in `--initial-cluster` needs to match the one in `----name`
 
     sudo chown -R etcd:etcd /var/lib/etcd
 
