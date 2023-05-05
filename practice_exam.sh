@@ -65,6 +65,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: web-frontend-svc
+  namespace: web
 spec:
   type: NodePort
   selector:
