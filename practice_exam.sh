@@ -24,6 +24,13 @@ insert_if_not_exists() {
   fi
 }
 
+# The actual exam.
+# - It does not have multiple choice questions, it is hands-on.
+# - Instead, you will be given real clusters and have to fix issues in them.
+# - You are allowed to use the official k8s documentation during the exam.
+#   But you are not allowed to use any other website/resources.
+# - The practice exams below are similar to the CKA.
+
 # 1. part 1.
 # (a) Count the Number of Nodes That Are Ready to Run Normal Workloads
 # (b) Retrieve Error Messages from a Container Log
