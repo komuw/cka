@@ -278,7 +278,7 @@ spec:
 #     Configure it so that volumes that use it can be expanded in the future.
 #     Note: This may require you to create additional objects.
 # (b) Create a Pod That Uses the PersistentVolume for Storage
-#     Pod called `pv-pod` in the `auth`` Namespace. It should use the `host-storage-pv` PersistentVolume for storage.
+#     Pod called `pv-pod` in the `auth` Namespace. It should use the `host-storage-pv` PersistentVolume for storage.
 #     This will require a PVC `host-storage-pvc` with size 100Mi in same namespace.
 #     Mount the volume that uses the PV for storage, so that `/output` directory ultimately writes to the PV.
 # (c) Expand the PersistentVolumeClaim so that it requests 200Mi.
@@ -384,6 +384,83 @@ spec:
     - protocol: TCP
       port: 80
 "
+
+    ./verify.sh
+}
+
+# 9. part 9.
+# (a) Create a Multi-Container Pod
+#     Called `multi` in `baz` NS with two containers with the following images `nginx`, `redis`
+# (b) Create a pod which uses a sidecar to expose the main container's log file to stdout
+#     - create pod `logging-sidecar` in `baz` NS running `busybox`
+#     - run second one `sidecar`, it reads output from the first container and prints it to console/terminal.
+part_nine(){
+    kubectl config use-context acgk8s # Switch to the `acgk8s` k8s cluster.
+
+    pod_one_contents="
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multi
+  namespace: baz
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  - name: redis
+    image: redis
+"
+
+    pod_two_contents="
+apiVersion: v1
+kind: Pod
+metadata:
+  name: logging-sidecar
+  namespace: baz
+spec:
+  containers:
+  - name: busybox1
+    image: busybox
+    command: ['sh', '-c', 'while true; do echo Logging data > /output/output.log; sleep 5; done']
+    volumeMounts:
+    - name: sharedvol
+      mountPath: /output
+  - name: sidecar
+    image: busybox
+    command: ['sh', '-c', 'tail -f /input/output.log']
+    volumeMounts:
+    - name: sharedvol
+      mountPath: /input
+  volumes:
+  - name: sharedvol
+    emptyDir: {}
+"
+
+    ./verify.sh
+}
+
+# 10. part 10.
+# (a) Determine What Is Wrong with the Broken Node
+#     - Something is wrong with one of the nodes in the cluster. 
+#     - Explore cluster, determine which Node is broken & save its name to the file /k8s/0004/broken-node.txt
+#     - Explore the broken Node and determine what is wrong with it.
+# (b) Fix the Problem. So that the node becomes `READY` again.
+part_ten(){
+    kubectl config use-context acgk8s # Switch to the `acgk8s` k8s cluster.
+
+    kubectl get nodes # find which not is not in `Ready` status.
+    echo "acgk8s-worker2" > /k8s/0004/broken-node.txt
+    kubectl describe node acgk8s-worker2
+      # `Kubelet stopped posting node status.`
+    ssh acgk8s-worker2
+    journalctl -u kubelet
+      # `stopped kubelet: The kubernetes Node Agent`
+    systemctl status kubelet
+      # `disabled & inactive`
+    systemctl enable kubelet
+    systemctl start kubelet
+    systemctl status kubelet
+    kubectl get nodes
 
     ./verify.sh
 }
