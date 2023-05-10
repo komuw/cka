@@ -31,7 +31,7 @@ insert_if_not_exists() {
 # - endpoints.
 
 # Service: Provides a way to expose an app running as a set of pods.
-#          They provide an abstrac way for clients to access apps without needing to be aware of the app's pods.
+#          They provide an abstract way for clients to access apps without needing to be aware of the app's pods.
 #          Clients make requests to a Service, which routes that traffic to its pods in a load-balanced manner.
 # Endpoints: They are the backend entities to which Services route traffic.
 #            If a service routes traffic to multiple pods, each pod will have an endpoint associated with the service.

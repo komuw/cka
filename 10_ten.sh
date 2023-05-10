@@ -28,7 +28,7 @@ insert_if_not_exists() {
 
 # - Container File systems: It is ephemeral. Files on th CFS exist only as long as the container exists.
 # - Volumes:                They allow us to store data outside the CFS while allowing container access the data at runtime.
-# - Persistent volumes:     They allow you to treat storage as an abstrac resource & consume it using your pods.
+# - Persistent volumes:     They allow you to treat storage as an abstract resource & consume it using your pods.
 # - Volume types:           Both volumes and persistent volumes have a type. The type determines how storage is actually handled. The common(there are more) types are;
 #                           (a) hostPath. Stores data in a specific directory in the k8s node.
 #                           (b) emptyDir. Stores data in a dynamically created directory in the k8s node. The dir & data is deleted when the pod ceases to exist.
@@ -61,7 +61,7 @@ spec:
 "
 }
 
-# Persistent volumes:    They allow you to treat storage as an abstrac resource & consume it using your pods.
+# Persistent volumes:    They allow you to treat storage as an abstract resource & consume it using your pods.
 #                        It uses a set of attributes to describe the underlying storage resources which will be used to store data.
 # PersistentVolumeClaim: It represents a user's request for storage resources.
 #                        When created, it will look for a PV that is able to meet the request criteria. If found, it will be `bound` to that PV.
