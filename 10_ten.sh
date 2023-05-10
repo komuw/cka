@@ -84,19 +84,6 @@ metadata:
 provisioner: kubernetes.io/no-provisioner # This stores data directly on the host disk.
 allowVolumeExpansion: false
 
-# This PVC will look for a PV that meets criteria; has same storageClassName, supports same accessModes, has >= requested storage amt.
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: my-pvc
-spec:
-  storageClassName: localdisk
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 100Mi  # If you want to resize a PVC, just change this. Note that the underlying StorageClass should `allowVolumeExpansion` for this to happen.
-
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -110,6 +97,19 @@ spec:
     - ReadWriteOnce
   hostPath:
     path: /var/output
+
+# This PVC will look for a PV that meets criteria; has same storageClassName, supports same accessModes, has >= requested storage amt.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-pvc
+spec:
+  storageClassName: localdisk
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi  # If you want to resize a PVC, just change this. Note that the underlying StorageClass should `allowVolumeExpansion` for this to happen.
 
 apiVersion: v1
 kind: Pod
