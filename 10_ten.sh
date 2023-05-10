@@ -39,7 +39,7 @@ insert_if_not_exists() {
 #                           (c) ConfigMaps
 #                           (d) Secrets
 #                           (e) Simple directory on the k8s node.
-# Container -> PersistentVolumeClaim -> PersistentVolume -> StorageClass -> External-storage
+# External-storage <- StorageClass <- PersistentVolume <- PersistentVolumeClaim <- Container
 
 volumes_and_mounts(){
     contents="
