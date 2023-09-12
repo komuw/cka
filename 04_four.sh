@@ -46,7 +46,8 @@ kubectl_cheatsheet(){
     export KUBECONFIG=/path/to/kubeconfig.yaml kubectl get pods
     kubectl config view # show the kubeconfig in use
     kubectl config view --raw # show whole config. You can send this to another computer and use kubectl in that computer to access the cluster.
-    
+    kubectl get all --all-namespaces # show all objects in all namespaces.
+    kubectl get all -n foo # show all objects in namespace foo.
 
     # get pods/services
     kubectl get services --all-namespaces
