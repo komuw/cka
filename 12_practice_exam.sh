@@ -458,7 +458,7 @@ part_ten(){
     kubectl get nodes # find which not is not in `Ready` status.
     echo "acgk8s-worker2" > /k8s/0004/broken-node.txt
     kubectl describe node acgk8s-worker2
-      # `Kubelet stopped posting node status.`
+      # `Kubelet stopped posting node status.` # check the 'Conditions' section
     ssh acgk8s-worker2
     journalctl -u kubelet
       # `stopped kubelet: The kubernetes Node Agent`
