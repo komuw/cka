@@ -74,6 +74,10 @@ spec:
 #   - Delete: deletes underlying strage resource automatically. This ONLY works for cloud storage resources.
 #   - Recycle: deletes data automatically, allowing PV to be reused.
 #
+# Note: You can also add labels to a PV and then add selector to a PVC.
+#       Only the volumes whose labels match the selector can be bound to the PVC.
+#       https://kubernetes.io/docs/concepts/storage/persistent-volumes/#selector
+#
 
 my_pv(){
     contents="
@@ -88,6 +92,8 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: my-pv
+  labels:
+    app: healthcare
 spec:
   storageClassName: localdisk
   persistentVolumeReclaimPolicy: Recycle
@@ -126,5 +132,21 @@ spec:
   - name: pv-storage
     persistentVolumeClaim:
       claimName: my-pvc # Should match the PVC metadata.name
+
+# This PVC will look for a PV that meets criteria; has same storageClassName, supports same accessModes, has >= requested storage amt, and matches labels.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: another-of-my-pvc
+spec:
+  storageClassName: localdisk
+  accessModes:
+    - ReadWriteOnce
+  selector:
+    matchLabels:
+      app: healthcare
+  resources:
+    requests:
+      storage: 100Mi
 "
 }
