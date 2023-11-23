@@ -67,7 +67,12 @@ kubectl_cheatsheet(){
     kubectl exec --stdin --tty my-pod -- /bin/sh                  # 1 container case
     kubectl exec --stdin --tty my-pod -c my-container -- /bin/sh  # multi-container case
     kubectl exec --namespace=namespace --stdin --tty podName -- /bin/sh
-    
+
+    # listen on port 8888 locally, forwarding to 80 in the service
+    kubectl port-forward services/prometheus-stack-grafana -n prometheus-stack 8888:80
+    # listen on port 8888 locally, forwarding to 80 in the pod
+    kubectl port-forward pod/mypod 8888:80
+
     # run a debugging pod in the context of another pod. it is like a better `kubectl run` or `kubectl exec`
     kubectl debug --namespace=someNamespace some-pod-26phw --container='my-debugger-pod' -it --image=komuw/debug:latest
 
