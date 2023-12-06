@@ -48,6 +48,7 @@ kubectl_cheatsheet(){
     kubectl config view --raw # show whole config. You can send this to another computer and use kubectl in that computer to access the cluster.
     kubectl get all --all-namespaces # show all objects in all namespaces.
     kubectl get all -n foo # show all objects in namespace foo.
+    kubectl get pods,deployments,replicasets,statefulsets --all-namespaces # get the named items.
 
     # get pods/services
     kubectl get services --all-namespaces
