@@ -270,6 +270,12 @@ install_k8s_metrics_server(){
     sleep 2
     kubectl get --raw /apis/metrics.k8s.io/
 
+    # To fetch custom metrics.
+    # The `c-abc7h` can be read from the conf.yaml `clusters.server` section
+    kubectl  --kubeconfig=conf.yaml get --raw "/k8s/clusters/c-abc7h/apis/custom.metrics.k8s.io/v1beta1/namespaces/<some-namespace>/ingresses.networking.k8s.io/*/ingress_response_total" | jq . 
+               
+
+
     pod_contents="
 apiVersion: v1
 kind: Pod
