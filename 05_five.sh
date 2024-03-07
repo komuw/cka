@@ -200,6 +200,12 @@ spec:
 #                      Scheduler will use those to avoid scheduling pods on nodes that don't have available resources.
 #                      Containers are allowed to use more resources than requested. Resource request only affects scheduling.
 # - resource limits: Limit amt of resources a container can use. Container runtime enforces this limits(eg by terminating container.)
+#
+# (a) Use CPU requests.
+# (b) Do NOT use cpu limits.
+# (c) Use memory requests.
+# (d) Use memory limits.
+# https://home.robusta.dev/blog/stop-using-cpu-limits
 manage_container_resources(){
     pod_contents="
 apiVersion: v1
