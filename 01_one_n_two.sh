@@ -221,6 +221,15 @@ deb https://apt.kubernetes.io/ kubernetes-xenial main
   # kubectl taint nodes node-one node-role.kubernetes.io/master-
 }
 
+renew_certificates(){
+  # "error: Unable to connect to the server: x509: certificate has expired or is not yet valid"
+  # https://stackoverflow.com/a/72111095/2768067
+  sudo kubeadm certs renew all
+  systemctl restart kubelet
+  sudo cp $HOME/.kube/config $HOME/.kube/.old-$(date --iso)-config
+  sudo cp /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+}
 
 control_plane_nodes(){
   1_install_pre_requistes
