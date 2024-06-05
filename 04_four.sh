@@ -124,7 +124,7 @@ kubectl_cheatsheet(){
     kubectl create deployment my-deployment --image=nginx --dry-run --export -o yaml > /tmp/mytmpl.yaml # export removes unneccesary data.
 
     # record the command that was used to make a change.
-    kubectl scale deployment my-deployment replicas=5 --record 
+    kubectl scale deployment my-deployment --replicas=5 --record 
     kubectl describe deployment my-deployment # The annotations will have the command that was recorded.
 }
 
