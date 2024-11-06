@@ -29,6 +29,8 @@ set -euo pipefail
 #     (b) etcd:            backend store for data relating to state of the cluster.
 #     (c) kube-scheduler:  does scheduling; process of selecting an available node on which to run containers.
 #     (d) kube-controller-manager: runs a collection of multiple controller utilities that do various things.
+#                                  a controller is a control loop that watches the shared state of the cluster through the apiserver and makes changes attempting to move the current state towards the desired state. 
+#                                  examples of controllers; replication controller, endpoints controller, namespace controller.
 #     (e) cloud-controller-manager: provides and interface btwn k8s and different cloud platforms. Comes inplay when using their(eg AWS) services with k8s.
 #
 # 2. Nodes(worker nodes): The machines where the containers run.
