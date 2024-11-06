@@ -31,7 +31,7 @@ set -euo pipefail
 #     (d) kube-controller-manager: runs a collection of multiple controller utilities that do various things.
 #                                  a controller is a control loop that watches the state of cluster and makes changes attempting to converge to desired state. 
 #                                  examples of controllers; replication controller, endpoints controller, namespace controller.
-#     (e) cloud-controller-manager: provides and interface btwn k8s and different cloud platforms. Comes inplay when using their(eg AWS) services with k8s.
+#     (e) cloud-controller-manager: provides an interface btwn k8s and different cloud platforms. Comes inplay when using their(eg AWS) services with k8s.
 #
 # 2. Nodes(worker nodes): The machines where the containers run.
 #                         Various node components manage containers on the machine and communicate with the the control plane.
