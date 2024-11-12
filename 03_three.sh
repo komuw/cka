@@ -43,6 +43,7 @@ set -euo pipefail
 #        You may need to ignore Daemonsets(pods that are tied to each node.)
 #        You may also need to ignore any stand-alone pods(that aren't part of a deployment/replicaset etc) using `--force` flag
 # Uncordon: Allow pods to run on the node after maintenance is complete.
+#           ie, Mark node as schedulable.
 #           uncordon does not cause already running pods to be rescheduled, but newly created pods can be scheduled in the node.
 kubectl get nodes
 kubectl drain <node-name> --ignore-daemonsets --force
