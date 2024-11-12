@@ -64,7 +64,7 @@ kubectl uncordon <node-name>
 # (b) worker upgrade.
 #     - drain node
 #     - upgrade kubeadm
-#     - upgrade kubelet configuration
+#     - upgrade kubelet configuration (upgrade node)
 #     - upgrade kubelet & kubectl
 #     - uncordon node.
 
