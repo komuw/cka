@@ -204,7 +204,7 @@ spec:
 # (a) Use CPU requests.
 # (b) Do NOT use cpu limits.
 # (c) Use memory requests.
-# (d) Use memory limits.
+# (d) Use memory limits. Set, memory_request == memory_limit.
 # https://home.robusta.dev/blog/stop-using-cpu-limits
 manage_container_resources(){
     pod_contents="
