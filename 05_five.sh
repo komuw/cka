@@ -228,9 +228,9 @@ spec:
 
 # Monitoring Container health with probes.
 # k8s needs to be able to determine the status of your app. This means actively monitoring container health.
-# - liveness probes:  Determine whether container is in healthy state. We can customize this to suit our app.
-# - startup probes:   Similar to liveness-probes except that this only run at startup.
+# - startup probes:   Determine whether container is in healthy state at startup.
 # - readiness probes: Determine when container is ready to start accepting requests.
+# - liveness probes:  Determine whether container is in healthy state. We can customize this to suit our app.
 health_probing(){
     pod_contents="
 apiVersion: v1
